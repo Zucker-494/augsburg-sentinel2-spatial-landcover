@@ -6,48 +6,47 @@ Status: **passed**
 ## Stage 2 — Raster preprocessing
 Status: **passed**
 
-Observed QA:
-- ≥1 valid observation: 100% for all three seasons;
-- ≥3 valid observations: Spring 99.8%, Summer 99.5%, Autumn 100%;
-- median valid observations: 5 for all three seasons.
-
 ## Stage 3 — Feature engineering
 Status: **passed**
 
 Observed QA:
 - 27 multi-season features created;
-- 1,467,614 pixels valid across all features;
-- 100,000 pixels used for feature-correlation QA;
-- NDVI, NDBI and NDWI maps show spatially plausible patterns.
+- 1,467,614 pixels valid across all features.
 
 ## Stage 4 — Reference labels and sampling
+Status: **passed**
+
+Observed QA:
+- selected reference classes cover 99.76% of jointly valid pixels;
+- 30,000 stratified reference samples;
+- 6,000 samples per class;
+- 2 km block coverage ranges from 31 blocks for Permanent water to 54 blocks for Tree cover;
+- no obvious reference-grid alignment failure.
+
+## Stage 5 — Machine-learning baseline
 Status: **ready to run**
 
-Processing:
-- align ESA WorldCover 2021 v200 to the Project04 10 m feature grid;
-- retain Tree cover, Grassland, Cropland, Built-up and Permanent water;
-- quantify selected-class coverage and class balance;
-- draw up to 6,000 reproducible samples per class;
-- assign each sample to a 2 km spatial block;
-- generate reference-map, class-balance and sample-distribution QA figures.
-
-Decision gate:
-Do not train classifiers until reference coverage, class counts, block coverage and spatial alignment are checked.
-
-## Stage 5 — Machine learning
-Planned:
-- extract 27 features at reference samples;
+Comparison:
+- 18 multi-season spectral bands;
+- 27 bands + NDVI/NDBI/NDWI features;
 - Random Forest;
 - HistGradientBoosting;
-- compare bands-only and bands-plus-indices feature sets.
+- common stratified 70/30 random pixel split;
+- accuracy and macro F1;
+- class-level metrics and confusion matrices;
+- permutation feature importance.
+
+Decision gate:
+Do not interpret Stage 5 scores as final spatial generalisation. They are the conventional random-validation baseline.
 
 ## Stage 6 — Spatial validation
-Core GIScience step:
-- random pixel split;
-- spatial block split;
-- compare performance difference.
+Planned:
+- spatial block train/test separation;
+- hold entire 2 km blocks together;
+- compare random versus spatial performance;
+- quantify the validation gap.
 
-## Stage 7 — Interpretation
+## Stage 7 — Interpretation and uncertainty
 Planned:
 - confusion matrices;
 - per-class F1;
@@ -59,7 +58,6 @@ Planned:
 Planned:
 - final classification;
 - validation comparison;
-- feature-importance figure;
 - uncertainty map;
 - interactive web map;
 - concise final report.

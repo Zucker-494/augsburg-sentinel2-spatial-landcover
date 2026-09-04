@@ -679,3 +679,66 @@ Later, spatial validation can keep entire blocks together when separating traini
 This is different from randomly splitting neighbouring pixels across both sets.
 
 The block design is one of the main steps that makes Project04 a spatial machine-learning workflow rather than only a conventional image-classification exercise.
+
+---
+
+## 36. What is a training/test split?
+
+A supervised machine-learning model should be evaluated using data that were not used to fit the model.
+
+Project04 therefore divides the reference samples into:
+
+```text
+training data → used to fit the classifier
+test data     → used to evaluate predictions
+```
+
+Stage 5 uses a conventional stratified random split.
+
+The word **stratified** means that the land-cover classes are kept in approximately the same proportions in both subsets.
+
+---
+
+## 37. Why compare feature sets?
+
+Project04 asks whether engineered spectral indices add useful predictive information beyond the original Sentinel-2 bands.
+
+The two Stage 5 feature sets are:
+
+```text
+Bands only:
+18 features = 6 bands × 3 seasons
+
+Bands + indices:
+27 features = 18 bands + 9 seasonal indices
+```
+
+If the 27-feature model performs better, the indices may be helping the classifier organise spectral information.
+
+If performance barely changes, the original bands may already contain most of the useful information.
+
+---
+
+## 38. HistGradientBoosting
+
+**HistGradientBoosting** is a tree-based machine-learning method.
+
+Unlike Random Forest, which combines many independently grown trees, gradient boosting builds trees sequentially.
+
+Each new tree focuses on patterns that earlier trees did not model well.
+
+Project04 uses HistGradientBoosting as a second classifier so the results do not depend on only one machine-learning algorithm.
+
+---
+
+## 39. Permutation importance
+
+Permutation importance asks:
+
+> How much worse does the model become if one feature is randomly shuffled?
+
+If shuffling a feature causes a large decrease in macro F1, that feature was useful to the fitted model.
+
+If performance barely changes, the model may not depend strongly on that feature.
+
+Permutation importance measures predictive usefulness within the fitted model. It does not prove that a feature has a causal effect on land cover.
