@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.DS_Store
+
+# Large raster products will be generated later and should not be committed
+data/imagery/
+data/processed/
+*.tif
+*.tiff
+*.jp2
+
+# Keep lightweight metadata
+!data/metadata/

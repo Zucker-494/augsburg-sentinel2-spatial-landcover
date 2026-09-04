@@ -1,0 +1,54 @@
+name: Project04 Stage1 Data QA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  stage1:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Stage 1
+        run: |
+          python src/run_stage1.py
+
+      - name: Show Stage 1 report
+        run: |
+          cat outputs/STAGE1_REPORT.md
+
+      - name: Upload Stage 1 artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: project04-stage1-data-qa
+          path: |
+            outputs/
+            data/raw/augsburg_boundary.geojson
+            data/metadata/sentinel_search_items.json
+
+      - name: Commit lightweight Stage 1 outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add outputs/ data/raw/augsburg_boundary.geojson data/metadata/sentinel_search_items.json
+          if git diff --cached --quiet; then
+            echo "No output changes to commit."
+          else
+            git commit -m "Generate Project04 Stage 1 data QA outputs"
+            git push
+          fi

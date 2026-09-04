@@ -1,0 +1,77 @@
+{
+  "project_name": "Augsburg Sentinel-2 Spatial Land-Cover Classification",
+  "aoi": {
+    "name": "Augsburg, Germany",
+    "osm_relation_id": 62407,
+    "utm_epsg": 32632
+  },
+  "sentinel": {
+    "stac_api": "https://earth-search.aws.element84.com/v1",
+    "collection": "sentinel-2-pre-c1-l2a",
+    "reference_year": 2021,
+    "cloud_cover_max": 20,
+    "max_items_per_season": 100,
+    "selected_scenes_per_season": 5,
+    "minimum_aoi_coverage": 0.95,
+    "seasons": {
+      "spring": [
+        "2021-03-01",
+        "2021-05-31"
+      ],
+      "summer": [
+        "2021-06-01",
+        "2021-08-31"
+      ],
+      "autumn": [
+        "2021-09-01",
+        "2021-11-30"
+      ]
+    },
+    "bands": [
+      "blue",
+      "green",
+      "red",
+      "nir",
+      "swir16",
+      "swir22",
+      "scl"
+    ]
+  },
+  "worldcover": {
+    "year": 2021,
+    "version": "v200",
+    "tile": "N48E009",
+    "source_url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N48E009_Map.tif",
+    "note": "Reference labels only; not independent field truth."
+  },
+  "future_modeling": {
+    "classes": {
+      "10": "Tree cover",
+      "30": "Grassland",
+      "40": "Cropland",
+      "50": "Built-up",
+      "80": "Permanent water"
+    },
+    "baseline_features": [
+      "B2",
+      "B3",
+      "B4",
+      "B8",
+      "B11",
+      "B12"
+    ],
+    "engineered_features": [
+      "NDVI",
+      "NDBI",
+      "NDWI"
+    ],
+    "models": [
+      "Random Forest",
+      "HistGradientBoosting"
+    ],
+    "validation": [
+      "random split",
+      "spatial block split"
+    ]
+  }
+}
