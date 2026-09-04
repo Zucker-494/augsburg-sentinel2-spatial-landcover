@@ -58,7 +58,7 @@ After GitHub Pages is enabled from the `/docs` folder, the map provides:
 
 - OpenStreetMap basemap;
 - final classification;
-- model-confidence overlay;
+- relative model-confidence view;
 - Augsburg municipal boundary.
 
 ## Project status

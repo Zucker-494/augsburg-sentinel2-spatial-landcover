@@ -1,6 +1,4 @@
-# Project04 Final Report
-
-## Project title
+# Augsburg Sentinel-2 Land-Cover Classification — Final Report
 
 **Augsburg Sentinel-2 Spatial Land-Cover Classification**
 
@@ -67,4 +65,4 @@ SWIR features remain dominant after moving from random to spatial validation. Sp
 
 ## Final interpretation
 
-Project04 shows that a relatively simple tree-based remote-sensing classifier can achieve stable spatial performance when the data pipeline is carefully controlled. The stronger methodological contribution is the explicit comparison of random and spatial validation, together with uncertainty and class-specific error analysis.
+This project shows that a relatively simple tree-based remote-sensing classifier can achieve stable spatial performance when the data pipeline is carefully controlled. The stronger methodological contribution is the explicit comparison of random and spatial validation, together with uncertainty and class-specific error analysis.
