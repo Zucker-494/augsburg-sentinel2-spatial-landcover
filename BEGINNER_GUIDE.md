@@ -872,3 +872,17 @@ Stage 5 calculated importance from a random test split.
 Stage 7 recalculates permutation importance within the spatial validation folds.
 
 This is more relevant to generalisation because each importance estimate is measured on spatially separated test data.
+
+---
+
+## 40. What is the final classification map?
+
+The final map is produced after model selection. The selected HistGradientBoosting model is fitted to all 30,000 reference samples and applied to every valid Augsburg pixel. The final raster is a presentation output, not a new validation dataset.
+
+## 41. Why is the confidence map not an accuracy map?
+
+The confidence map shows the highest class probability produced by the final classifier. It describes how decisive the model is, not the true probability that the pixel is correct. Project04 does not calibrate probabilities, so confidence is interpreted relatively.
+
+## 42. Why keep the interactive map?
+
+The interactive map lets readers zoom into mixed urban and agricultural areas, switch the classification and confidence layers on or off, compare results with OpenStreetMap, and inspect the municipal boundary.

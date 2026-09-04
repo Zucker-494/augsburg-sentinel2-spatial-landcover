@@ -15,45 +15,35 @@ Status: **passed**
 ## Stage 5 — Machine-learning baseline
 Status: **passed**
 
-Observed random baseline:
-- best single random split: HistGradientBoosting + bands + indices;
-- Accuracy 0.891;
-- Macro F1 0.890.
-
 ## Stage 6 — Spatial validation
 Status: **passed**
 
-Observed 5-fold validation:
-- HistGradientBoosting + bands + indices: random macro F1 0.891 ± 0.003; spatial 0.884 ± 0.008; gap 0.72 pp;
-- HistGradientBoosting + bands only: 0.889 ± 0.004 vs 0.883 ± 0.008; gap 0.57 pp;
-- Random Forest + bands only: 0.890 ± 0.002 vs 0.881 ± 0.007; gap 0.91 pp;
-- Random Forest + bands + indices: 0.889 ± 0.003 vs 0.880 ± 0.008; gap 0.93 pp;
-- spatial train/test block overlap: 0.
-
-Interpretation:
-- random pixel validation is mildly optimistic;
-- the observed gap is approximately 0.6–0.9 percentage points rather than a large collapse;
-- HistGradientBoosting + bands + indices remains the best spatially validated configuration.
+Best spatial configuration:
+- HistGradientBoosting;
+- bands + indices;
+- mean spatial macro F1: 0.884 ± 0.008;
+- random-minus-spatial gap: approximately 0.72 percentage points.
 
 ## Stage 7 — Interpretation and uncertainty
+Status: **passed**
+
+Observed:
+- Permanent water: highest spatial OOF accuracy (0.978);
+- Grassland: lowest spatial OOF accuracy (0.825);
+- low-confidence share highest for Grassland (13.6%);
+- SWIR features dominate spatial permutation importance;
+- spring NDWI and autumn NDVI add predictive information.
+
+## Stage 8 — Final portfolio packaging
 Status: **ready to run**
 
-Processing:
-- regenerate spatial out-of-fold predictions for the selected configuration;
-- row-normalized spatial confusion matrix;
-- spatial distribution of out-of-fold errors;
-- class-specific confidence summaries;
-- permutation importance averaged across spatial folds;
-- fit selected model to all reference samples;
-- predict full-study classification and relative confidence rasters.
+Outputs:
+- final land-cover classification figure;
+- final report and summary;
+- polished README;
+- project-freeze status;
+- GitHub Pages interactive map;
+- classification and confidence overlays.
 
-Decision gate:
-Check confusion structure, error geography, confidence patterns and spatial feature importance before assembling final outputs.
-
-## Stage 8 — Final presentation
-Planned:
-- final land-cover map;
-- final confidence map;
-- core model/validation figures;
-- interactive web map;
-- final README and concise project report.
+Final decision gate:
+Inspect the final classification and interactive map. If both are visually and spatially correct, freeze Project04.
