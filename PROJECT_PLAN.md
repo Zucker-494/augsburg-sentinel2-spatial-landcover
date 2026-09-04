@@ -12,53 +12,48 @@ Status: **passed**
 ## Stage 4 — Reference labels and sampling
 Status: **passed**
 
-Observed QA:
-- five selected WorldCover classes cover 99.76% of jointly valid pixels;
-- 30,000 stratified reference samples;
-- 6,000 samples per class;
-- each class represented across multiple 2 km spatial blocks.
-
 ## Stage 5 — Machine-learning baseline
 Status: **passed**
 
-Observed random 70/30 baseline:
-- HistGradientBoosting + bands + indices: Accuracy 0.891, Macro F1 0.890;
-- Random Forest + bands only: Accuracy 0.888, Macro F1 0.888;
-- HistGradientBoosting + bands only: Accuracy 0.887, Macro F1 0.887;
-- Random Forest + bands + indices: Accuracy 0.888, Macro F1 0.887.
-
-Interpretation:
-- spectral indices provide only a small improvement for HistGradientBoosting;
-- they do not improve Random Forest in this single random split;
-- SWIR features dominate the best-model permutation-importance ranking.
+Observed random baseline:
+- best single random split: HistGradientBoosting + bands + indices;
+- Accuracy 0.891;
+- Macro F1 0.890.
 
 ## Stage 6 — Spatial validation
-Status: **ready to run**
+Status: **passed**
 
-Core comparison:
-- stratified random 5-fold CV;
-- stratified grouped spatial 5-fold CV;
-- complete 2 km spatial blocks kept within folds;
-- identical four model / feature-set configurations;
-- mean ± SD across folds;
-- random-minus-spatial validation gap;
-- class-level F1 under the best spatial configuration.
+Observed 5-fold validation:
+- HistGradientBoosting + bands + indices: random macro F1 0.891 ± 0.003; spatial 0.884 ± 0.008; gap 0.72 pp;
+- HistGradientBoosting + bands only: 0.889 ± 0.004 vs 0.883 ± 0.008; gap 0.57 pp;
+- Random Forest + bands only: 0.890 ± 0.002 vs 0.881 ± 0.007; gap 0.91 pp;
+- Random Forest + bands + indices: 0.889 ± 0.003 vs 0.880 ± 0.008; gap 0.93 pp;
+- spatial train/test block overlap: 0.
 
-Decision gate:
-Do not proceed to final interpretation until block leakage is confirmed to be zero and all classes are represented in each spatial fold.
+Interpretation:
+- random pixel validation is mildly optimistic;
+- the observed gap is approximately 0.6–0.9 percentage points rather than a large collapse;
+- HistGradientBoosting + bands + indices remains the best spatially validated configuration.
 
 ## Stage 7 — Interpretation and uncertainty
-Planned:
-- fit selected model;
-- class-specific confusion patterns;
-- spatial error distribution;
-- prediction confidence / uncertainty;
-- feature importance under the selected configuration.
+Status: **ready to run**
+
+Processing:
+- regenerate spatial out-of-fold predictions for the selected configuration;
+- row-normalized spatial confusion matrix;
+- spatial distribution of out-of-fold errors;
+- class-specific confidence summaries;
+- permutation importance averaged across spatial folds;
+- fit selected model to all reference samples;
+- predict full-study classification and relative confidence rasters.
+
+Decision gate:
+Check confusion structure, error geography, confidence patterns and spatial feature importance before assembling final outputs.
 
 ## Stage 8 — Final presentation
 Planned:
-- final classification;
-- uncertainty map;
-- core validation figures;
+- final land-cover map;
+- final confidence map;
+- core model/validation figures;
 - interactive web map;
-- concise final report.
+- final README and concise project report.

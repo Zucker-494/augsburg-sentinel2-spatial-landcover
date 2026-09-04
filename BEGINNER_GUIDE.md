@@ -816,3 +816,59 @@ The mean describes average performance across folds.
 The standard deviation describes how much performance changes between different folds.
 
 A model with slightly lower mean performance but much smaller fold-to-fold variation may sometimes be more spatially stable.
+
+# Stage 7 Beginner Guide Addition
+
+## Out-of-fold prediction
+
+An **out-of-fold prediction** is made for an observation by a model that was not trained on that observation's validation fold.
+
+In Project04 spatial validation, this means a sample is predicted by a model that did not train on the sample's own 2 km spatial block.
+
+Out-of-fold predictions are therefore appropriate for inspecting validation errors and confidence.
+
+## Confusion matrix
+
+A confusion matrix shows which classes are confused with each other.
+
+Rows represent reference classes and columns represent predicted classes.
+
+The Stage 7 matrix is row-normalized, so each row adds to 100%.
+
+This makes it easier to answer questions such as:
+
+> What percentage of reference grassland pixels were predicted as cropland?
+
+## Model confidence
+
+For each pixel, HistGradientBoosting produces a probability-like score for each class.
+
+Project04 defines confidence as:
+
+```text
+maximum predicted class probability
+```
+
+A value near 1 means one class strongly dominates the model's prediction.
+
+A lower value means the model is less decisive.
+
+These probabilities are not calibrated in Project04, so they should be interpreted as relative confidence rather than literal probabilities of correctness.
+
+## Error map
+
+The spatial error map plots reference samples that were predicted incorrectly during spatial cross-validation.
+
+This helps answer:
+
+> Are model errors scattered randomly, or do they cluster in certain parts of Augsburg?
+
+A spatial pattern can reveal where land-cover classes or spectral conditions are harder for the fitted model.
+
+## Spatially validated feature importance
+
+Stage 5 calculated importance from a random test split.
+
+Stage 7 recalculates permutation importance within the spatial validation folds.
+
+This is more relevant to generalisation because each importance estimate is measured on spatially separated test data.
