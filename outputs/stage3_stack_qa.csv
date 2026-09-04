@@ -1,0 +1,2 @@
+feature_count,jointly_valid_pixels,correlation_sample_pixels,stack_path
+27,1467614,100000,data/processed/multiseason_feature_stack.tif
