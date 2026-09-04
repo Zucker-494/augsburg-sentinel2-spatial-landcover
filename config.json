@@ -7,7 +7,7 @@
   },
   "sentinel": {
     "stac_api": "https://earth-search.aws.element84.com/v1",
-    "collection": "sentinel-2-pre-c1-l2a",
+    "collection": "sentinel-2-l2a",
     "reference_year": 2021,
     "cloud_cover_max": 20,
     "max_items_per_season": 100,
