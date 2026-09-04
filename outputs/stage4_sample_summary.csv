@@ -1,0 +1,6 @@
+class_code,class_name,sample_count,spatial_blocks
+10,Tree cover,6000,54
+30,Grassland,6000,53
+40,Cropland,6000,47
+50,Built-up,6000,43
+80,Permanent water,6000,31
