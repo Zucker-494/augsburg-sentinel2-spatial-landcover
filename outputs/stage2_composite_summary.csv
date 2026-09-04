@@ -1,0 +1,4 @@
+season,selected_scenes,aoi_pixels,pixels_with_at_least_1_valid_obs_pct,pixels_with_at_least_3_valid_obs_pct,median_valid_observations,p10_valid_observations,min_valid_observations,max_valid_observations
+spring,5,1467614,100.0,99.80492145754947,5.0,5.0,2,5
+summer,5,1467614,100.0,99.50300283317003,5.0,5.0,2,5
+autumn,5,1467614,100.0,99.9948215266412,5.0,5.0,1,5
