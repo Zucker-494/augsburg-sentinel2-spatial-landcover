@@ -1,0 +1,8 @@
+{
+  "selected_model": "HistGradientBoosting",
+  "selected_feature_set": "bands_plus_indices",
+  "feature_count": 27,
+  "spatial_validation": "5-fold StratifiedGroupKFold",
+  "spatial_block_size_m": 2000,
+  "final_model_fit": "Final full-grid prediction model fitted to all 30,000 reference samples after model selection. Raster confidence is model probability, not calibrated probability."
+}
