@@ -1,0 +1,49 @@
+{
+  "random_seed": 42,
+  "test_size": 0.3,
+  "total_samples": 30000,
+  "class_order": [
+    10,
+    30,
+    40,
+    50,
+    80
+  ],
+  "class_names": {
+    "10": "Tree cover",
+    "30": "Grassland",
+    "40": "Cropland",
+    "50": "Built-up",
+    "80": "Permanent water"
+  },
+  "feature_names": [
+    "spring_blue",
+    "spring_green",
+    "spring_red",
+    "spring_nir",
+    "spring_swir16",
+    "spring_swir22",
+    "spring_ndvi",
+    "spring_ndbi",
+    "spring_ndwi",
+    "summer_blue",
+    "summer_green",
+    "summer_red",
+    "summer_nir",
+    "summer_swir16",
+    "summer_swir22",
+    "summer_ndvi",
+    "summer_ndbi",
+    "summer_ndwi",
+    "autumn_blue",
+    "autumn_green",
+    "autumn_red",
+    "autumn_nir",
+    "autumn_swir16",
+    "autumn_swir22",
+    "autumn_ndvi",
+    "autumn_ndbi",
+    "autumn_ndwi"
+  ],
+  "note": "Stage 5 uses random stratified pixel validation only. Spatial block validation is intentionally reserved for Stage 6."
+}

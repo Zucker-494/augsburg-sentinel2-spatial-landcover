@@ -1,0 +1,6 @@
+model,feature_set,class_name,precision,recall,f1,support
+HistGradientBoosting,bands_plus_indices,Tree cover,0.8548206278026906,0.8472222222222222,0.8510044642857143,1800
+HistGradientBoosting,bands_plus_indices,Grassland,0.8215883668903803,0.8161111111111111,0.8188405797101449,1800
+HistGradientBoosting,bands_plus_indices,Cropland,0.9186900056465274,0.9038888888888889,0.9112293475217026,1800
+HistGradientBoosting,bands_plus_indices,Built-up,0.8821621621621621,0.9066666666666666,0.8942465753424658,1800
+HistGradientBoosting,bands_plus_indices,Permanent water,0.9750968456004427,0.9788888888888889,0.9769891876906016,1800
