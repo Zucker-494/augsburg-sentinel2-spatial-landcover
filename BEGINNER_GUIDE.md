@@ -587,99 +587,95 @@ If you are completely new to the topic, read these sections first:
 
 After that, the Project04 workflow should be much easier to follow.
 
-
 ---
 
-# Advanced concepts used later in Project04
+## 31. What is ESA WorldCover?
 
-The following ideas are not required for Stage 1, but they explain why this project goes beyond a basic image-classification exercise.
+ESA WorldCover is a global land-cover product with 10 m spatial resolution.
 
-## 26. Spatial autocorrelation
+Project04 uses the 2021 v200 product as a reproducible source of reference labels.
 
-**Spatial autocorrelation** means that observations close to each other in space are often more similar than observations far apart.
-
-In a satellite image, two neighbouring pixels may belong to the same field, forest patch, road, or building block.
-
-This matters for machine learning because a random train/test split can place almost identical neighbouring pixels into both the training and test sets.
-
-The reported accuracy can then be too optimistic.
-
----
-
-## 27. Random validation versus spatial validation
-
-A normal random split may look like this:
+The selected Project04 classes are:
 
 ```text
-training pixels and test pixels are mixed across the whole city
+10  Tree cover
+30  Grassland
+40  Cropland
+50  Built-up
+80  Permanent water
 ```
 
-Project04 will also use **spatial validation**.
-
-The study area will be divided into spatial blocks. Entire blocks will be kept together when assigning training and test data.
-
-This asks a more demanding question:
-
-> Can the model classify locations that are spatially separate from the locations it learned from?
-
-The difference between random and spatial validation is one of the main GIScience components of Project04.
+WorldCover is used to tell the machine-learning model which land-cover class is associated with selected training pixels.
 
 ---
 
-## 28. Multi-temporal imagery
+## 32. Reference labels are not the same as ground truth
 
-**Multi-temporal** means using observations from more than one date.
+A **reference label** is the class value used as the target in model training or evaluation.
 
-Project04 is designed so that spring, summer, and autumn Sentinel-2 observations can be compared or combined.
+A true independent ground-truth dataset would ideally come from field observation, manually verified interpretation, or another source that is independent from the imagery used to build the model.
 
-This is useful because vegetation changes through the year.
+WorldCover is itself an Earth-observation product. It was produced using satellite data, including Sentinel observations.
 
-For example, forest and cropland may have similar reflectance at one date but different seasonal patterns.
+Therefore Project04 must not say:
 
-The model can therefore use temporal information as an additional feature.
+> The model achieved independent ground-truth accuracy of X%.
+
+A more accurate interpretation is:
+
+> The model reproduced the selected WorldCover reference classes with X% agreement under this validation design.
+
+This distinction is important for scientifically responsible interpretation.
 
 ---
 
-## 29. Classification uncertainty
+## 33. Class balance
 
-A classifier does not always make equally confident decisions.
+**Class balance** describes how many training or reference observations belong to each class.
 
-For one pixel, a model may predict:
+For example:
 
 ```text
-Tree cover: 0.94
-Cropland:   0.03
-Built-up:   0.02
-Water:      0.01
+Built-up: 100,000 pixels
+Water:      5,000 pixels
 ```
 
-For another pixel:
+If all pixels are used directly, a model may be dominated by the large class.
 
-```text
-Tree cover: 0.41
-Cropland:   0.38
-Built-up:   0.17
-Water:      0.04
-```
+Project04 therefore creates a stratified modelling sample with a target number of pixels per class.
 
-Both pixels may finally be labelled as tree cover, but the second prediction is much less certain.
-
-Project04 will therefore create an uncertainty or confidence layer instead of showing only the final class map.
+The original class proportions are still recorded separately.
 
 ---
 
-## 30. Why Project04 uses a reference land-cover product
+## 34. Stratified sampling
 
-A supervised classifier needs labelled examples.
+**Stratified sampling** means sampling observations separately within predefined groups.
 
-Project04 uses ESA WorldCover 2021 as a reproducible reference layer for the first version of the workflow.
+In Project04, the groups are land-cover classes.
 
-Important limitation:
+A simplified example is:
 
-> WorldCover is not independent field truth.
+```text
+Tree cover      → 6,000 samples
+Grassland       → 6,000 samples
+Cropland        → 6,000 samples
+Built-up        → 6,000 samples
+Permanent water → 6,000 samples
+```
 
-WorldCover itself was produced from Earth-observation data, including Sentinel data. Therefore, agreement with WorldCover must not be presented as independent real-world classification accuracy.
+This helps prevent the largest land-cover class from dominating model fitting.
 
-Spatial validation still helps test spatial generalisation within this reference framework, but the final interpretation must preserve this limitation.
+---
 
-A later extension can add manually checked or otherwise independent validation samples.
+## 35. Spatial blocks
+
+Project04 assigns each sampled pixel to a 2 km spatial block.
+
+The block ID records which part of Augsburg the sample belongs to.
+
+Later, spatial validation can keep entire blocks together when separating training and testing data.
+
+This is different from randomly splitting neighbouring pixels across both sets.
+
+The block design is one of the main steps that makes Project04 a spatial machine-learning workflow rather than only a conventional image-classification exercise.

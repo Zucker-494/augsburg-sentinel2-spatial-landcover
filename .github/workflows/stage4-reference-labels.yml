@@ -1,0 +1,69 @@
+name: Project04 Stage4 Reference Labels
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  stage4:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Download Stage 3 artifact
+        uses: dawidd6/action-download-artifact@v11
+        with:
+          workflow: stage3-feature-engineering.yml
+          name: project04-stage3-feature-stack
+          path: stage3_artifact
+          workflow_conclusion: success
+          branch: main
+
+      - name: Restore Stage 3 processed rasters
+        run: |
+          mkdir -p data/processed
+          cp -r stage3_artifact/data/processed/. data/processed/
+
+      - name: Run Stage 4
+        run: |
+          python src/run_stage4.py
+
+      - name: Show Stage 4 report
+        run: |
+          cat outputs/STAGE4_REPORT.md
+
+      - name: Upload complete Stage 4 artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: project04-stage4-reference-labels
+          path: |
+            outputs/
+            data/processed/worldcover_selected_reference.tif
+            data/samples/reference_samples.csv
+
+      - name: Commit lightweight Stage 4 outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add outputs/
+          if git diff --cached --quiet; then
+            echo "No output changes to commit."
+          else
+            git commit -m "Generate Project04 Stage 4 reference outputs"
+            git push
+          fi
