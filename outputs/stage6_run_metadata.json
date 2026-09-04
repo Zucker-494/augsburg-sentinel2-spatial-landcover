@@ -1,0 +1,7 @@
+{
+  "n_splits": 5,
+  "random_seed": 42,
+  "spatial_group_field": "block_id",
+  "spatial_block_size_m": 2000,
+  "note": "Random and spatial validation are both evaluated with five folds. Spatial folds keep complete 2 km blocks together."
+}
