@@ -1,0 +1,2 @@
+joint_valid_pixels,selected_reference_pixels,selected_reference_coverage_pct,sample_rows,target_samples_per_class,spatial_block_size_m,random_seed
+1467614,1464146,99.76369808410114,30000,6000,2000,42
