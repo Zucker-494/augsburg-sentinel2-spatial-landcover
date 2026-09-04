@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Project04 - Augsburg Sentinel-2 Land Cover</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+html, body { height: 100%; margin: 0; font-family: Arial, sans-serif; }
+#map { height: 100%; }
+.info { background: rgba(255,255,255,0.94); padding: 10px 12px; line-height: 1.4; box-shadow: 0 1px 5px rgba(0,0,0,0.25); border-radius: 4px; max-width: 320px; }
+.legend { font-size: 13px; }
+.title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.note { font-size: 11px; color: #444; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map');
+const bounds = [[48.25742316927369, 10.761841304327003], [48.460537036205686, 10.962749139800268]];
+const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'}).addTo(map);
+const classification = L.imageOverlay('assets/classification_overlay.png', bounds, {opacity: 0.78}).addTo(map);
+const confidence = L.imageOverlay('assets/confidence_overlay.png', bounds, {opacity: 0.70});
+fetch('assets/augsburg_boundary.geojson').then(r => r.json()).then(data => {
+  const boundary = L.geoJSON(data, {style: {color: '#333333', weight: 1.5, fillOpacity: 0}}).addTo(map);
+  L.control.layers({'OpenStreetMap': osm}, {'Land-cover classification': classification, 'Model confidence': confidence, 'Augsburg boundary': boundary}, {collapsed: false}).addTo(map);
+});
+map.fitBounds(bounds);
+const info = L.control({position: 'bottomleft'});
+info.onAdd = function() {
+  const div = L.DomUtil.create('div', 'info legend');
+  div.innerHTML = `<div class="title">Project04 - Augsburg land cover</div><div><span style="display:inline-block;width:12px;height:12px;background:#2E7D32;margin-right:6px;"></span>Tree cover</div><div><span style="display:inline-block;width:12px;height:12px;background:#A8C96F;margin-right:6px;"></span>Grassland</div><div><span style="display:inline-block;width:12px;height:12px;background:#D8B365;margin-right:6px;"></span>Cropland</div><div><span style="display:inline-block;width:12px;height:12px;background:#C45A52;margin-right:6px;"></span>Built-up</div><div><span style="display:inline-block;width:12px;height:12px;background:#4C78A8;margin-right:6px;"></span>Permanent water</div><div class="note">Sentinel-2 2021 multi-season features; HistGradientBoosting selected by 5-fold spatial validation. Confidence is relative model confidence, not calibrated probability of correctness.</div>`;
+  return div;
+};
+info.addTo(map);
+</script>
+</body>
+</html>

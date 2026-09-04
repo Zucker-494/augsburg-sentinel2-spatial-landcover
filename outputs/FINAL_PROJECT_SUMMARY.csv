@@ -1,0 +1,10 @@
+item,value
+Study area,Augsburg municipality
+Sentinel-2 scenes,15 selected scenes
+Temporal design,Spring / Summer / Autumn 2021
+Feature stack,27 features
+Reference samples,"30,000"
+Spatial block size,2 km
+Selected model,HistGradientBoosting
+Selected feature set,bands_plus_indices
+Spatial macro F1,0.884 ± 0.008
