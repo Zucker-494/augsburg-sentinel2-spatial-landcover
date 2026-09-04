@@ -9,55 +9,56 @@ Status: **passed**
 ## Stage 3 — Feature engineering
 Status: **passed**
 
-Observed QA:
-- 27 multi-season features created;
-- 1,467,614 pixels valid across all features.
-
 ## Stage 4 — Reference labels and sampling
 Status: **passed**
 
 Observed QA:
-- selected reference classes cover 99.76% of jointly valid pixels;
+- five selected WorldCover classes cover 99.76% of jointly valid pixels;
 - 30,000 stratified reference samples;
 - 6,000 samples per class;
-- 2 km block coverage ranges from 31 blocks for Permanent water to 54 blocks for Tree cover;
-- no obvious reference-grid alignment failure.
+- each class represented across multiple 2 km spatial blocks.
 
 ## Stage 5 — Machine-learning baseline
-Status: **ready to run**
+Status: **passed**
 
-Comparison:
-- 18 multi-season spectral bands;
-- 27 bands + NDVI/NDBI/NDWI features;
-- Random Forest;
-- HistGradientBoosting;
-- common stratified 70/30 random pixel split;
-- accuracy and macro F1;
-- class-level metrics and confusion matrices;
-- permutation feature importance.
+Observed random 70/30 baseline:
+- HistGradientBoosting + bands + indices: Accuracy 0.891, Macro F1 0.890;
+- Random Forest + bands only: Accuracy 0.888, Macro F1 0.888;
+- HistGradientBoosting + bands only: Accuracy 0.887, Macro F1 0.887;
+- Random Forest + bands + indices: Accuracy 0.888, Macro F1 0.887.
 
-Decision gate:
-Do not interpret Stage 5 scores as final spatial generalisation. They are the conventional random-validation baseline.
+Interpretation:
+- spectral indices provide only a small improvement for HistGradientBoosting;
+- they do not improve Random Forest in this single random split;
+- SWIR features dominate the best-model permutation-importance ranking.
 
 ## Stage 6 — Spatial validation
-Planned:
-- spatial block train/test separation;
-- hold entire 2 km blocks together;
-- compare random versus spatial performance;
-- quantify the validation gap.
+Status: **ready to run**
+
+Core comparison:
+- stratified random 5-fold CV;
+- stratified grouped spatial 5-fold CV;
+- complete 2 km spatial blocks kept within folds;
+- identical four model / feature-set configurations;
+- mean ± SD across folds;
+- random-minus-spatial validation gap;
+- class-level F1 under the best spatial configuration.
+
+Decision gate:
+Do not proceed to final interpretation until block leakage is confirmed to be zero and all classes are represented in each spatial fold.
 
 ## Stage 7 — Interpretation and uncertainty
 Planned:
-- confusion matrices;
-- per-class F1;
-- feature importance;
-- uncertainty / confidence map;
-- spatial pattern of classification errors.
+- fit selected model;
+- class-specific confusion patterns;
+- spatial error distribution;
+- prediction confidence / uncertainty;
+- feature importance under the selected configuration.
 
 ## Stage 8 — Final presentation
 Planned:
 - final classification;
-- validation comparison;
 - uncertainty map;
+- core validation figures;
 - interactive web map;
 - concise final report.

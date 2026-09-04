@@ -742,3 +742,77 @@ If shuffling a feature causes a large decrease in macro F1, that feature was use
 If performance barely changes, the model may not depend strongly on that feature.
 
 Permutation importance measures predictive usefulness within the fitted model. It does not prove that a feature has a causal effect on land cover.
+
+# Stage 6 Beginner Guide Addition
+
+## Spatial leakage
+
+Spatial leakage happens when training and testing data are separated statistically but remain too close or too similar in space.
+
+For example:
+
+```text
+same agricultural field:
+pixel A → training
+pixel B → testing
+```
+
+The model may appear to generalise well even though the test pixel is almost identical to data already seen during training.
+
+## Cross-validation
+
+Cross-validation repeats model evaluation across several train/test partitions.
+
+In five-fold cross-validation:
+
+```text
+Fold 1 → test part 1
+Fold 2 → test part 2
+Fold 3 → test part 3
+Fold 4 → test part 4
+Fold 5 → test part 5
+```
+
+Every observation is used for testing once.
+
+The project reports the mean performance and the variability across folds.
+
+## StratifiedGroupKFold
+
+Project04 uses `StratifiedGroupKFold` for spatial validation.
+
+Two requirements are combined:
+
+1. samples from the same 2 km spatial block stay together;
+2. the class distribution is kept as balanced across folds as possible.
+
+This makes the test data more spatially independent than a random pixel split.
+
+## Validation gap
+
+Project04 defines:
+
+```text
+validation gap =
+random-validation macro F1
+-
+spatial-validation macro F1
+```
+
+A positive value means random validation reports better performance.
+
+A large positive gap suggests that spatial dependence may have made the random test artificially easy.
+
+## Mean and standard deviation
+
+Five-fold results are reported as:
+
+```text
+mean ± standard deviation
+```
+
+The mean describes average performance across folds.
+
+The standard deviation describes how much performance changes between different folds.
+
+A model with slightly lower mean performance but much smaller fold-to-fold variation may sometimes be more spatially stable.

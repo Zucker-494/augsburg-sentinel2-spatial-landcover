@@ -1,0 +1,77 @@
+name: Project04 Stage6 Spatial Validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  stage6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Download Stage 3 feature artifact
+        uses: dawidd6/action-download-artifact@v11
+        with:
+          workflow: stage3-feature-engineering.yml
+          name: project04-stage3-feature-stack
+          path: stage3_artifact
+          workflow_conclusion: success
+          branch: main
+
+      - name: Download Stage 4 reference artifact
+        uses: dawidd6/action-download-artifact@v11
+        with:
+          workflow: stage4-reference-labels.yml
+          name: project04-stage4-reference-labels
+          path: stage4_artifact
+          workflow_conclusion: success
+          branch: main
+
+      - name: Restore modelling inputs
+        run: |
+          mkdir -p data/processed data/samples
+          cp stage3_artifact/data/processed/multiseason_feature_stack.tif data/processed/
+          cp stage4_artifact/data/samples/reference_samples.csv data/samples/
+
+      - name: Run Stage 6
+        run: |
+          python src/run_stage6.py
+
+      - name: Show Stage 6 report
+        run: |
+          cat outputs/STAGE6_REPORT.md
+
+      - name: Upload complete Stage 6 artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: project04-stage6-spatial-validation
+          path: |
+            outputs/
+
+      - name: Commit lightweight Stage 6 outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add outputs/
+          if git diff --cached --quiet; then
+            echo "No output changes to commit."
+          else
+            git commit -m "Generate Project04 Stage 6 spatial validation"
+            git push
+          fi
