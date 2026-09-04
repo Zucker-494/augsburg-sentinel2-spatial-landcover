@@ -1,0 +1,11 @@
+{
+  "source_url": "https://esa-worldcover.s3.eu-central-1.amazonaws.com/v200/2021/map/ESA_WorldCover_10m_2021_v200_N48E009_Map.tif",
+  "http_status": 206,
+  "range_request_ok": true,
+  "content_type": "binary/octet-stream",
+  "content_range": "bytes 0-1023/94851935",
+  "reference_year": 2021,
+  "version": "v200",
+  "tile": "N48E009",
+  "interpretation": "Reference labels only; not independent field truth."
+}
