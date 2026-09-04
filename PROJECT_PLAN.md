@@ -15,32 +15,30 @@ Observed Stage 1 snapshot:
 
 ## Stage 2 — Raster preprocessing
 
-Status: **ready to run**
+Status: **passed**
 
-Processing:
-- construct a 10 m Augsburg target grid in EPSG:32632;
-- read selected Sentinel-2 COG assets;
-- apply SCL-based quality masking;
-- resample spectral bands to the common grid;
-- build spring, summer and autumn median composites;
-- count valid observations per pixel;
-- create true-colour and valid-observation QA figures.
-
-Decision gate:
-Do not proceed to feature engineering until seasonal coverage after masking is checked.
+Observed QA:
+- ≥1 valid observation: 100% for all three seasons;
+- ≥3 valid observations: Spring 99.8%, Summer 99.5%, Autumn 100%;
+- median valid observations: 5 for all three seasons;
+- P10 valid observations: 5 for all three seasons;
+- true-colour composites show no obvious cloud, alignment or coverage failure.
 
 ## Stage 3 — Feature engineering
 
-Planned:
-- original bands;
-- NDVI;
-- NDBI;
-- NDWI;
-- multi-season feature stack.
+Status: **ready to run**
 
-Comparison:
-- bands only;
-- bands + engineered indices.
+Processing:
+- derive NDVI, NDBI and NDWI for spring, summer and autumn;
+- retain six original spectral bands for each season;
+- build a 27-band multi-season raster feature stack;
+- create a band manifest;
+- calculate feature distribution QA;
+- calculate a sampled feature-correlation matrix;
+- create representative summer index quicklooks.
+
+Decision gate:
+Do not proceed to reference-label sampling until feature ranges and index maps are checked.
 
 ## Stage 4 — Reference labels
 
