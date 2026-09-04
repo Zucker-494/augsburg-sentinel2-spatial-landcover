@@ -76,10 +76,10 @@ def make_final_classification_map():
     ]
     ax.legend(handles=handles, title="Predicted class", frameon=False,
               loc="lower left", fontsize=8.5, title_fontsize=9)
-    ax.set_title("Final Project04 land-cover classification", loc="left",
+    ax.set_title("Predicted land cover in Augsburg", loc="left",
                  fontsize=13, fontweight="semibold", pad=10)
     ax.text(0.0, -0.055,
-            "HistGradientBoosting using 27 multi-season Sentinel-2 features; selected by 5-fold spatial validation.",
+            "HistGradientBoosting with 27 multi-season Sentinel-2 features; model selected by 5-fold spatial validation.",
             transform=ax.transAxes, fontsize=8.5, va="top")
     ax.set_axis_off()
     fig.tight_layout()
@@ -137,24 +137,61 @@ def make_web_assets():
 
 def make_index_html(class_bounds):
     left, bottom, right, top = class_bounds
-    legend_html = "".join(
-        f'<div><span style="display:inline-block;width:12px;height:12px;background:{color};margin-right:6px;"></span>{name}</div>'
+
+    class_legend_html = "".join(
+        f'<div><span style="display:inline-block;width:12px;height:12px;'
+        f'background:{color};margin-right:6px;"></span>{name}</div>'
         for _, name, color in CLASS_INFO
     )
+
+    confidence_legend_html = """
+      <div style="margin-top:7px;">
+        <div style="
+          width:210px;
+          height:12px;
+          border-radius:2px;
+          background:linear-gradient(
+            to right,
+            #440154 0%,
+            #3b528b 25%,
+            #21918c 50%,
+            #5ec962 75%,
+            #fde725 100%
+          );
+        "></div>
+        <div style="
+          width:210px;
+          display:flex;
+          justify-content:space-between;
+          font-size:11px;
+          margin-top:2px;
+        ">
+          <span>0.5</span><span>1.0</span>
+        </div>
+      </div>
+    """
+
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Project04 - Augsburg Sentinel-2 Land Cover</title>
+<title>Augsburg Sentinel-2 Land-Cover Classification</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
 html, body {{ height: 100%; margin: 0; font-family: Arial, sans-serif; }}
 #map {{ height: 100%; }}
-.info {{ background: rgba(255,255,255,0.94); padding: 10px 12px; line-height: 1.4; box-shadow: 0 1px 5px rgba(0,0,0,0.25); border-radius: 4px; max-width: 320px; }}
+.info {{
+  background: rgba(255,255,255,0.95);
+  padding: 10px 12px;
+  line-height: 1.4;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.25);
+  border-radius: 4px;
+  max-width: 330px;
+}}
 .legend {{ font-size: 13px; }}
 .title {{ font-size: 15px; font-weight: 700; margin-bottom: 6px; }}
-.note {{ font-size: 11px; color: #444; margin-top: 6px; }}
+.note {{ font-size: 11px; color: #444; margin-top: 7px; }}
 </style>
 </head>
 <body>
@@ -163,24 +200,96 @@ html, body {{ height: 100%; margin: 0; font-family: Arial, sans-serif; }}
 <script>
 const map = L.map('map');
 const bounds = [[{bottom}, {left}], [{top}, {right}]];
-const osm = L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'}}).addTo(map);
-const classification = L.imageOverlay('assets/classification_overlay.png', bounds, {{opacity: 0.78}}).addTo(map);
-const confidence = L.imageOverlay('assets/confidence_overlay.png', bounds, {{opacity: 0.70}});
-fetch('assets/augsburg_boundary.geojson').then(r => r.json()).then(data => {{
-  const boundary = L.geoJSON(data, {{style: {{color: '#333333', weight: 1.5, fillOpacity: 0}}}}).addTo(map);
-  L.control.layers({{'OpenStreetMap': osm}}, {{'Land-cover classification': classification, 'Model confidence': confidence, 'Augsburg boundary': boundary}}, {{collapsed: false}}).addTo(map);
-}});
+
+const osm = L.tileLayer(
+  'https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png',
+  {{
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }}
+).addTo(map);
+
+const classification = L.imageOverlay(
+  'assets/classification_overlay.png',
+  bounds,
+  {{opacity: 0.88}}
+).addTo(map);
+
+const confidence = L.imageOverlay(
+  'assets/confidence_overlay.png',
+  bounds,
+  {{opacity: 0.82}}
+);
+
 map.fitBounds(bounds);
+
 const info = L.control({{position: 'bottomleft'}});
 info.onAdd = function() {{
-  const div = L.DomUtil.create('div', 'info legend');
-  div.innerHTML = `<div class="title">Project04 - Augsburg land cover</div>{legend_html}<div class="note">Sentinel-2 2021 multi-season features; HistGradientBoosting selected by 5-fold spatial validation. Confidence is relative model confidence, not calibrated probability of correctness.</div>`;
-  return div;
+  this._div = L.DomUtil.create('div', 'info legend');
+  this.update('classification');
+  return this._div;
 }};
+
+info.update = function(mode) {{
+  if (mode === 'confidence') {{
+    this._div.innerHTML = `
+      <div class="title">Relative model confidence</div>
+      {confidence_legend_html}
+      <div class="note">
+        Maximum HistGradientBoosting class probability.
+        Values are used as relative confidence and are not calibrated
+        probabilities of correctness.
+      </div>`;
+  }} else {{
+    this._div.innerHTML = `
+      <div class="title">Predicted land cover in Augsburg</div>
+      {class_legend_html}
+      <div class="note">
+        Sentinel-2 2021 multi-season features; HistGradientBoosting
+        selected by 5-fold spatial validation.
+      </div>`;
+  }}
+}};
+
 info.addTo(map);
+
+fetch('assets/augsburg_boundary.geojson')
+  .then(r => r.json())
+  .then(data => {{
+    const boundary = L.geoJSON(data, {{
+      style: {{
+        color: '#333333',
+        weight: 1.5,
+        fillOpacity: 0
+      }}
+    }}).addTo(map);
+
+    // The two analytical raster views are base layers so only one can
+    // be visible at a time. This avoids visually mixing class colours
+    // with the continuous confidence surface.
+    L.control.layers(
+      {{
+        'Land-cover classification': classification,
+        'Relative model confidence': confidence
+      }},
+      {{
+        'Augsburg boundary': boundary
+      }},
+      {{collapsed: false}}
+    ).addTo(map);
+
+    map.on('baselayerchange', function(e) {{
+      if (e.layer === confidence) {{
+        info.update('confidence');
+      }} else {{
+        info.update('classification');
+      }}
+    }});
+  }});
 </script>
 </body>
 </html>"""
+
     (DOCS / "index.html").write_text(html, encoding="utf-8")
 
 
@@ -194,7 +303,7 @@ def write_final_report():
     best_gap = gap[(gap["model"] == best["model"]) & (gap["feature_set"] == best["feature_set"])].iloc[0]
 
     lines = [
-        "# Project04 Final Report", "", "## Project title", "",
+        "# Augsburg Sentinel-2 Land-Cover Classification — Final Report", "",
         "**Augsburg Sentinel-2 Spatial Land-Cover Classification**", "",
         "## Research question", "",
         "How well can multi-season Sentinel-2 imagery reproduce major land-cover patterns in Augsburg, and how do feature engineering and spatial validation change apparent model performance?", "",
@@ -224,7 +333,7 @@ def write_final_report():
         "4. The workflow uses selected 2021 observations and does not test temporal transfer to other years.",
         "5. The final classification reproduces the selected five-class reference scheme rather than providing a new operational land-cover product.", "",
         "## Final interpretation", "",
-        "Project04 shows that a relatively simple tree-based remote-sensing classifier can achieve stable spatial performance when the data pipeline is carefully controlled. The stronger methodological contribution is the explicit comparison of random and spatial validation, together with uncertainty and class-specific error analysis."
+        "This project shows that a relatively simple tree-based remote-sensing classifier can achieve stable spatial performance when the data pipeline is carefully controlled. The stronger methodological contribution is the explicit comparison of random and spatial validation, together with uncertainty and class-specific error analysis."
     ]
     (OUT / "FINAL_REPORT.md").write_text("\n".join(lines), encoding="utf-8")
 
@@ -290,7 +399,7 @@ After GitHub Pages is enabled from the `/docs` folder, the map provides:
 
 - OpenStreetMap basemap;
 - final classification;
-- model-confidence overlay;
+- relative model-confidence view;
 - Augsburg municipal boundary.
 
 ## Project status
@@ -301,7 +410,7 @@ After GitHub Pages is enabled from the `/docs` folder, the map provides:
 
 
 def write_status():
-    text = """# Project04 Status
+    text = """# Project Status
 
 ## Final status
 
