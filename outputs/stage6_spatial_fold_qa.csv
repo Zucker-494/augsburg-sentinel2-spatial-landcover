@@ -1,0 +1,6 @@
+fold,train_samples,test_samples,train_blocks,test_blocks,block_overlap
+1,23880,6120,45,11,0
+2,24131,5869,47,9,0
+3,23936,6064,45,11,0
+4,24112,5888,44,12,0
+5,23941,6059,43,13,0
