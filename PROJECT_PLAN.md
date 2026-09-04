@@ -2,28 +2,32 @@
 
 ## Stage 1 — Data discovery and QA
 
-Status: **ready**
+Status: **passed**
 
-Outputs:
-- exact Augsburg municipal boundary;
-- Sentinel-2 seasonal scene inventory;
-- selected low-cloud candidate scenes;
-- WorldCover source check;
-- Stage 1 report.
-
-Decision gate:
-Do not proceed to modelling until scene coverage and cloud conditions are inspected.
+Observed Stage 1 snapshot:
+- 51 Sentinel-2 candidate scenes;
+- 15 selected scenes;
+- 5 scenes per season;
+- predominantly complete Augsburg coverage;
+- one summer scene with approximately 95.4% AOI footprint coverage;
+- spring includes one scene close to the 20% scene-level cloud-search threshold;
+- WorldCover reference source reachable.
 
 ## Stage 2 — Raster preprocessing
 
-Planned:
-- read selected COG assets;
-- crop to Augsburg;
-- apply reflectance scaling;
-- cloud and cloud-shadow masking from SCL;
-- resample B11/B12 from 20 m to 10 m;
-- create seasonal median composites;
-- verify CRS, transform, shape and nodata consistency.
+Status: **ready to run**
+
+Processing:
+- construct a 10 m Augsburg target grid in EPSG:32632;
+- read selected Sentinel-2 COG assets;
+- apply SCL-based quality masking;
+- resample spectral bands to the common grid;
+- build spring, summer and autumn median composites;
+- count valid observations per pixel;
+- create true-colour and valid-observation QA figures.
+
+Decision gate:
+Do not proceed to feature engineering until seasonal coverage after masking is checked.
 
 ## Stage 3 — Feature engineering
 
@@ -32,7 +36,7 @@ Planned:
 - NDVI;
 - NDBI;
 - NDWI;
-- optional multi-season features.
+- multi-season feature stack.
 
 Comparison:
 - bands only;

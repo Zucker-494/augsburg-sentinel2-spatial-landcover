@@ -1,7 +1,9 @@
 geopandas>=1.0
 matplotlib>=3.9
+numpy>=2.0
 pandas>=2.2
 pyproj>=3.6
 pystac-client>=0.8
+rasterio>=1.4
 requests>=2.32
 shapely>=2.0

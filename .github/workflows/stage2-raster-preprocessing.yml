@@ -1,0 +1,54 @@
+name: Project04 Stage2 Raster Preprocessing
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  stage2:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Stage 2
+        run: |
+          python src/run_stage2.py
+
+      - name: Show Stage 2 report
+        run: |
+          cat outputs/STAGE2_REPORT.md
+
+      - name: Upload complete Stage 2 artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: project04-stage2-seasonal-composites
+          path: |
+            outputs/
+            data/processed/
+
+      - name: Commit lightweight Stage 2 outputs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add outputs/
+          if git diff --cached --quiet; then
+            echo "No output changes to commit."
+          else
+            git commit -m "Generate Project04 Stage 2 preprocessing outputs"
+            git push
+          fi
